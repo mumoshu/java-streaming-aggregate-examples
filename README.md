@@ -74,6 +74,18 @@ This project provides five variants with O(page_size) memory overhead:
 
 For different capabilities (backpressure, reactive streams, Kotlin, etc.), see [docs/alternatives.md](docs/alternatives.md).
 
+## Benchmarking
+
+Run memory benchmarks to compare variants:
+
+```bash
+./benchmark.sh --orders=500000 --pageSize=1000 --cpus=1
+```
+
+Each variant runs in an isolated Docker container for accurate memory measurement. See [docs/benchmarking.md](docs/benchmarking.md) for configuration options.
+
+For a detailed analysis of benchmark results explaining why each variant performs as it does, see [docs/benchmark_example_analysis.md](docs/benchmark_example_analysis.md).
+
 ## Running Tests
 
 ```bash
