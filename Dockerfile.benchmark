@@ -1,0 +1,32 @@
+# Dockerfile for the benchmark client container
+#
+# Build: docker build -t streaming-benchmark-client -f Dockerfile.benchmark .
+# Run:   docker run --rm -e VARIANT=naive -e SERVER_URL=http://server:8080/orders streaming-benchmark-client
+
+FROM maven:3.9-eclipse-temurin-21-alpine AS build
+
+WORKDIR /app
+COPY pom.xml ./
+RUN mvn dependency:go-offline -q
+
+COPY src src
+RUN mvn package -DskipTests -q && \
+    mvn dependency:copy-dependencies -DoutputDirectory=target/dependency -q
+
+# Runtime image
+FROM eclipse-temurin:21-jre-alpine
+
+WORKDIR /app
+COPY --from=build /app/target/classes target/classes
+COPY --from=build /app/target/dependency target/dependency
+
+# Fixed heap for consistent measurements
+ENV JAVA_OPTS="-Xms256m -Xmx512m -XX:+UseG1GC"
+
+# Environment variables for configuration:
+# VARIANT - aggregation variant: naive, stream, iterator, async, reactor, virtual (required)
+# SERVER_URL - server URL (default: http://server:8080/orders)
+# PAGE_SIZE - orders per page (default: 100)
+# ORDERS - total number of orders (default: 100000)
+# INTERVAL - sample interval in ms (default: 100)
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -cp target/classes:target/dependency/* com.example.benchmark.MemoryBenchmarkMain --url=${SERVER_URL:-http://server:8080/orders} --variant=${VARIANT} --pageSize=${PAGE_SIZE:-100} --orders=${ORDERS:-100000} --interval=${INTERVAL:-100}"]

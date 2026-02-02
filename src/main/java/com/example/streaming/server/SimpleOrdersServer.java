@@ -14,29 +14,34 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
- * Simple HTTP server for testing paginated API responses.
+ * Simple HTTP server for paginated API responses.
  * Uses the JDK's built-in com.sun.net.httpserver.HttpServer.
  *
  * <p>This server simulates a paginated orders API that returns:
- * - Configurable number of orders split across pages
- * - Cursor-based pagination
- * - Configurable page size
+ * <ul>
+ *   <li>Configurable number of orders split across pages</li>
+ *   <li>Cursor-based pagination</li>
+ *   <li>Configurable page size</li>
+ * </ul>
  *
  * <p>Example usage:
  * <pre>{@code
  * try (SimpleOrdersServer server = SimpleOrdersServer.create(1000, 100)) {
  *     server.start();
  *     String baseUrl = server.getBaseUrl() + "/orders";
- *     // Use baseUrl in tests...
+ *     // Use baseUrl...
  * }
  * }</pre>
  */
 public class SimpleOrdersServer implements AutoCloseable {
 
     private final HttpServer server;
+    private final ExecutorService executor;
     private final int port;
     private final List<OrderData> orders;
     private final int pageSize;
@@ -49,15 +54,23 @@ public class SimpleOrdersServer implements AutoCloseable {
      * @param pageSize number of orders per page
      * @return configured server (not yet started)
      */
-    public static SimpleOrdersServer create(int totalOrders, int pageSize) throws IOException {
-        return new SimpleOrdersServer(0, totalOrders, pageSize);
+    public static SimpleOrdersServer create(int totalOrders, int pageSize) {
+        try {
+            return new SimpleOrdersServer(0, totalOrders, pageSize);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to create server", e);
+        }
     }
 
     /**
      * Creates a server on a specific port.
      */
-    public static SimpleOrdersServer createOnPort(int port, int totalOrders, int pageSize) throws IOException {
-        return new SimpleOrdersServer(port, totalOrders, pageSize);
+    public static SimpleOrdersServer createOnPort(int port, int totalOrders, int pageSize) {
+        try {
+            return new SimpleOrdersServer(port, totalOrders, pageSize);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to create server on port " + port, e);
+        }
     }
 
     private SimpleOrdersServer(int port, int totalOrders, int pageSize) throws IOException {
@@ -68,7 +81,8 @@ public class SimpleOrdersServer implements AutoCloseable {
         this.port = server.getAddress().getPort();
 
         server.createContext("/orders", new OrdersHandler());
-        server.setExecutor(Executors.newSingleThreadExecutor());
+        this.executor = Executors.newSingleThreadExecutor();
+        server.setExecutor(executor);
     }
 
     /**
@@ -134,6 +148,15 @@ public class SimpleOrdersServer implements AutoCloseable {
     @Override
     public void close() {
         server.stop(0);
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(1, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
     }
 
     /**

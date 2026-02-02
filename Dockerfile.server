@@ -1,0 +1,31 @@
+# Dockerfile for the orders server container
+#
+# Build: docker build -t streaming-benchmark-server -f Dockerfile.server .
+# Run:   docker run --rm -e ORDERS=100000 -e PAGE_SIZE=100 streaming-benchmark-server
+
+FROM maven:3.9-eclipse-temurin-21-alpine AS build
+
+WORKDIR /app
+COPY pom.xml ./
+RUN mvn dependency:go-offline -q
+
+COPY src src
+RUN mvn package -DskipTests -q && \
+    mvn dependency:copy-dependencies -DoutputDirectory=target/dependency -q
+
+# Runtime image - small footprint for server
+FROM eclipse-temurin:21-jre-alpine
+
+WORKDIR /app
+COPY --from=build /app/target/classes target/classes
+COPY --from=build /app/target/dependency target/dependency
+
+# Small heap for server - it just needs to hold page data
+ENV JAVA_OPTS="-Xms64m -Xmx128m"
+
+EXPOSE 8080
+
+# Environment variables for configuration:
+# ORDERS - total number of orders (default: 100000)
+# PAGE_SIZE - orders per page (default: 100)
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -cp target/classes:target/dependency/* com.example.streaming.server.SimpleOrdersServerMain 8080 ${ORDERS:-100000} ${PAGE_SIZE:-100}"]
