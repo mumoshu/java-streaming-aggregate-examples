@@ -37,6 +37,16 @@ This project provides five variants that process items **one at a time** with O(
 
 *Virtual threads use blocking I/O but are cheap (~1KB vs ~1MB for platform threads), allowing millions of concurrent operations.
 
+### Which Variant to Choose?
+
+| Scenario | Recommendation |
+|----------|----------------|
+| Java 8-20, simple use case | Stream API or Iterator |
+| Java 8-20, non-blocking required | Async |
+| Java 8-20, backpressure needed | Reactor |
+| Java 21+, simple code preference | Virtual Threads |
+| Java 21+, reactive ecosystem integration | Reactor |
+
 ## API Response Format
 
 ```json
