@@ -9,7 +9,7 @@ This project provides **five implementation variants** with identical memory eff
 When aggregating data from paginated APIs, naive implementations buffer all items before computing results:
 
 ```java
-// Bad: Buffers the entire result in memory
+// Bad: O(total_items) memory - buffers everything
 List<Order> allOrders = new ArrayList<>();
 while (hasMorePages) {
     byte[] responseBody = httpClient.send(request).body();  // Entire response in memory
@@ -25,7 +25,17 @@ This approach fails with large datasets (OutOfMemoryError) and wastes memory eve
 
 ## Solution
 
-This project provides five variants that process items **one at a time** with O(page_size) memory overhead:
+Process items **one at a time** without buffering:
+
+```java
+// Good: O(page_size) memory - items processed as they arrive
+double sum = StreamSupport.stream(new PaginatedSpliterator<>(
+        cursor -> objectMapper.readValue(httpClient.send(request(cursor)).body(), pageType),
+        new CursorBasedPagination()
+), false).mapToDouble(Order::amount).sum();
+```
+
+This project provides five variants with O(page_size) memory overhead:
 
 | Variant | Package | Style | Blocking | Aggregation | Java | Docs |
 |---------|---------|-------|----------|-------------|------|------|
