@@ -226,3 +226,7 @@ public static List<OrderStats> aggregateMultiple(List<String> urls) {
 
 - Java 21 or later
 - No additional dependencies (uses standard library)
+
+## See Also
+
+- [Virtual Threads Friendliness](virtualthreadsfriendliness.md) - How to ensure your code works efficiently with virtual threads (unmounting, pinning, library compatibility)
