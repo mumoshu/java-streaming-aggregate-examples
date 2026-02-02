@@ -2,7 +2,7 @@
 
 Demonstrates how to stream and aggregate results from paginated JSON HTTP APIs **without buffering entire pages or all items in memory**.
 
-This project provides **three implementation variants** with identical memory efficiency but different programming styles.
+This project provides **five implementation variants** with identical memory efficiency but different programming styles.
 
 ## Problem
 
@@ -25,13 +25,17 @@ This approach fails with large datasets (OutOfMemoryError) and wastes memory eve
 
 ## Solution
 
-This project provides three variants that process items **one at a time** with O(page_size) memory overhead:
+This project provides five variants that process items **one at a time** with O(page_size) memory overhead:
 
-| Variant | Package | Style | Blocking | Iterator | Aggregator | Docs |
-|---------|---------|-------|----------|----------|------------|------|
-| **Stream API** | `com.example.streaming` | Functional | Yes | `PaginatedSpliterator` | `OrderStatsCollector` | [javastream.md](docs/javastream.md) |
-| **Iterator** | `com.example.iterable` | Imperative | Yes | `PaginatedIterator` | `OrderStatsAggregator` | [iterator.md](docs/iterator.md) |
-| **Async** | `com.example.async` | Future-based | No | `AsyncPaginatedIterator` | `AsyncOrderStatsAggregator` | [async.md](docs/async.md) |
+| Variant | Package | Style | Blocking | Aggregation | Java | Docs |
+|---------|---------|-------|----------|-------------|------|------|
+| **Stream API** | `com.example.streaming` | Functional | Yes | `collect()` | 8+ | [javastream.md](docs/javastream.md) |
+| **Iterator** | `com.example.iterable` | Imperative | Yes | Loop | 8+ | [iterator.md](docs/iterator.md) |
+| **Async** | `com.example.async` | Future-based | No | Recursion | 8+ | [async.md](docs/async.md) |
+| **Reactor** | `com.example.reactor` | Reactive | No | `reduce()` | 8+ | [reactor.md](docs/reactor.md) |
+| **Virtual Threads** | `com.example.virtualthreads` | Imperative | Yes* | Loop | 21+ | [virtualthreads.md](docs/virtualthreads.md) |
+
+*Virtual threads use blocking I/O but are cheap (~1KB vs ~1MB for platform threads), allowing millions of concurrent operations.
 
 ## API Response Format
 
