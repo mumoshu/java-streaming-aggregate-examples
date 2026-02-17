@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  */
 public class BenchmarkOrchestrator {
 
-    private static final String[] VARIANTS = {"naive", "stream", "iterator", "async", "reactor", "virtual"};
+    private static final String[] VARIANTS = {"naive", "stream", "iterator", "pooled", "async", "reactor", "virtual"};
     private static final int[] DEFAULT_PAGE_SIZES = {10, 100, 1000};
     private static final String NETWORK_NAME = "benchmark-net";
     private static final String SERVER_IMAGE = "streaming-benchmark-server";

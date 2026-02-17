@@ -6,6 +6,7 @@ import com.example.naive.NaiveAggregator;
 import com.example.reactor.ReactorAggregator;
 import com.example.streaming.StreamingAggregator;
 import com.example.streaming.model.OrderStats;
+import com.example.iterable.PooledIteratorAggregator;
 import com.example.virtualthreads.VirtualThreadAggregator;
 
 /**
@@ -24,7 +25,7 @@ import com.example.virtualthreads.VirtualThreadAggregator;
  *     --interval=100
  * </pre>
  *
- * <p>Variant values: naive, stream, iterator, async, reactor, virtual
+ * <p>Variant values: naive, stream, iterator, pooled, async, reactor, virtual
  *
  * <p>Output: JSON to stdout:
  * <pre>
@@ -42,7 +43,7 @@ public class MemoryBenchmarkMain {
         if (url == null || variant == null) {
             System.err.println("Error: --url and --variant parameters are required");
             System.err.println("Usage: java ... MemoryBenchmarkMain --url=<url> --variant=<name> [--pageSize=N] [--orders=N] [--interval=N]");
-            System.err.println("Variants: naive, stream, iterator, async, reactor, virtual");
+            System.err.println("Variants: naive, stream, iterator, pooled, async, reactor, virtual");
             System.exit(1);
         }
 
@@ -80,11 +81,12 @@ public class MemoryBenchmarkMain {
             case "naive" -> new NaiveAggregator(url).aggregateOrders();
             case "stream" -> new StreamingAggregator(url).aggregateOrders();
             case "iterator" -> new IterableAggregator(url).aggregateOrders();
+            case "pooled" -> new PooledIteratorAggregator(url).aggregateOrders();
             case "async" -> new AsyncIterableAggregator(url).aggregateOrdersAsync().join();
             case "reactor" -> new ReactorAggregator(url).aggregateOrders().block();
             case "virtual" -> new VirtualThreadAggregator(url).aggregateOrders();
             default -> throw new IllegalArgumentException("Unknown variant: " + variant +
-                    ". Valid values: naive, stream, iterator, async, reactor, virtual");
+                    ". Valid values: naive, stream, iterator, pooled, async, reactor, virtual");
         };
     }
 
@@ -93,6 +95,7 @@ public class MemoryBenchmarkMain {
             case "naive" -> "Naive";
             case "stream" -> "Stream API";
             case "iterator" -> "Iterator";
+            case "pooled" -> "Pooled Iterator";
             case "async" -> "Async";
             case "reactor" -> "Reactor";
             case "virtual" -> "Virtual Threads";
