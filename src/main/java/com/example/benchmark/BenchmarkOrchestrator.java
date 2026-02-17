@@ -369,7 +369,7 @@ public class BenchmarkOrchestrator {
         System.out.println("  └─────────────────┴──────────┴───────────┴──────────┴───────────┴────────────┘");
     }
 
-    private static final char[] GRAPH_CHARS = {'▁', '▂', '▃', '▄', '▅', '▆', '▇', '█'};
+    private static final char[] GRAPH_CHARS = {'.', '.', '.', ':', ':', '#', '#', '#'};
     private static final int GRAPH_WIDTH = 50;
     private static final int GRAPH_HEIGHT = 6;
 
@@ -449,13 +449,13 @@ public class BenchmarkOrchestrator {
         for (int row = GRAPH_HEIGHT - 1; row >= 0; row--) {
             // Y-axis label
             if (row == GRAPH_HEIGHT - 1) {
-                System.out.printf("  %3.0f │", maxHeap);
+                System.out.printf("  %3.0f |", maxHeap);
             } else if (row == 0) {
-                System.out.printf("  %3.0f │", minHeap);
+                System.out.printf("  %3.0f |", minHeap);
             } else if (row == GRAPH_HEIGHT / 2) {
-                System.out.printf("  %3.0f │", (minHeap + maxHeap) / 2);
+                System.out.printf("  %3.0f |", (minHeap + maxHeap) / 2);
             } else {
-                System.out.print("      │");
+                System.out.print("      |");
             }
 
             // Graph content - each column is a time slice
@@ -471,7 +471,7 @@ public class BenchmarkOrchestrator {
                 double rowTop = minHeap + (range * (row + 1) / GRAPH_HEIGHT);
 
                 if (v >= rowTop) {
-                    System.out.print("█");
+                    System.out.print("#");
                 } else if (v > rowBottom) {
                     double fraction = (v - rowBottom) / (rowTop - rowBottom);
                     int charIndex = (int) (fraction * GRAPH_CHARS.length);
@@ -485,8 +485,8 @@ public class BenchmarkOrchestrator {
         }
 
         // X-axis line
-        System.out.print("      └");
-        System.out.println("─".repeat(GRAPH_WIDTH));
+        System.out.print("      +");
+        System.out.println("-".repeat(GRAPH_WIDTH));
 
         // X-axis labels (time)
         double maxDurationSec = maxDurationMs / 1000.0;

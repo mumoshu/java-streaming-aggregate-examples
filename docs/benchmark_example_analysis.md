@@ -24,13 +24,13 @@ This document analyzes a specific benchmark run to explain the observed results 
 ┌─────────────────┬──────────┬───────────┬──────────┬───────────┬────────────┐
 │ Variant         │ Duration │ Peak Heap │ Avg Heap │ Alloc Rate│ Est. GCs   │
 ├─────────────────┼──────────┼───────────┼──────────┼───────────┼────────────┤
-│ Naive           │   1.12s  │    114 MB │    59 MB │   191 MB/s│      3     │
-│ Stream API      │   1.03s  │    157 MB │    73 MB │   203 MB/s│      1     │
-│ Iterator        │   1.01s  │    154 MB │    74 MB │   208 MB/s│      1     │
-│ Pooled Iterator │   0.94s  │    110 MB │    64 MB │   104 MB/s│      0     │
-│ Async           │   1.35s  │    153 MB │    83 MB │   394 MB/s│      3     │
-│ Reactor         │   0.87s  │    150 MB │    69 MB │   281 MB/s│      1     │
-│ Virtual Threads │   0.79s  │    154 MB │    78 MB │   273 MB/s│      1     │
+│ Naive           │   1.37s  │    114 MB │    68 MB │   188 MB/s│      3     │
+│ Stream API      │   0.90s  │    145 MB │    68 MB │   228 MB/s│      1     │
+│ Iterator        │   0.96s  │    146 MB │    68 MB │   231 MB/s│      1     │
+│ Pooled Iterator │   0.96s  │    108 MB │    63 MB │   102 MB/s│      0     │
+│ Async           │   1.36s  │    132 MB │    68 MB │   352 MB/s│      3     │
+│ Reactor         │   0.94s  │    155 MB │    73 MB │   237 MB/s│      1     │
+│ Virtual Threads │   1.04s  │    147 MB │    68 MB │   207 MB/s│      1     │
 └─────────────────┴──────────┴───────────┴──────────┴───────────┴────────────┘
 ```
 
@@ -40,91 +40,91 @@ These graphs show heap usage sampled at 100ms intervals. All graphs share the sa
 
 ```
 Naive - Heap Used (MB)
-  125 │                                        ▁▄
-      │                                 ▃▃▃    ██
-   63 │           ▁▁▁               ▁▁▁▁███▄▄▄▄██
-      │       ▂▂▂▂███    ▁▁▁▁████▃▃▃█████████████
-      │   ▂▂▂▂███████▄▄▄▄████████████████████████
-    0 │▃▃▃███████████████████████████████████████
-      └──────────────────────────────────────────────────
+  124 |                                    ::::       ..:
+      |                                ....####   ....###
+   62 |          ....       ####    :::########:::#######
+      |       :::####    ...####::::#####################
+      |   ###########....################################
+    0 |...###############################################
+      +--------------------------------------------------
       0                                              1.4s
 
 Stream API - Heap Used (MB)
-  172 │                         ▄▄▄▄
-      │                      ▃▃▃████
-   86 │                  ▅▅▅▅███████         ▁
-      │          ▄▄▄▄███████████████       ▅▅█
-      │       ▇▇▇███████████████████▂▂▂▂██████
-    0 │▂▂▂████████████████████████████████████
-      └──────────────────────────────────────────────────
+  159 |                  :::::
+      |              ....#####
+   79 |          ....#########         .
+      |       :::#############      :::#
+      |     ::################    ::####
+    0 |.....############################
+      +--------------------------------------------------
       0                                              1.4s
 
 Iterator - Heap Used (MB)
-  168 │                         ▄▄▄▄
-      │                      ▆▆▆████
-   84 │              ▂▂▂▂▆▆▆▆███████        ▁
-      │          ▄▄▄▄███████████████    ▂▂▂██
-      │   ▁▁▁▁▇▇▇███████████████████    █████
-    0 │▂▂▂███████████████████████████████████
-      └──────────────────────────────────────────────────
+  160 |                     :::::
+      |                  ########
+   80 |              ############        .
+      |          ################      ###
+      |   ....###################   ######
+    0 |...################################
+      +--------------------------------------------------
       0                                              1.4s
 
 Pooled Iterator - Heap Used (MB)
-  120 │                                 ▃▄
-      │                             ▆▆▆▆██
-   60 │                  ▃▃▃▃▆▆▆██████████
-      │           ▄▄▄█████████████████████
-      │   ▃▃▃▃████████████████████████████
-    0 │▃▃▃████████████████████████████████
-      └──────────────────────────────────────────────────
+  118 |                                ..:
+      |                         ::::######
+   59 |                   ..##############
+      |          ....:::::################
+      |   ....############################
+    0 |...################################
+      +--------------------------------------------------
       0                                              1.4s
 
 Async - Heap Used (MB)
-  167 │              ▄▄▄▄           ▃▃▃▃           ▄▄▄
-      │           ▁▁▁████           ████       ▃▃▃▃███
-   84 │           ███████       ████████       ███████  ▃
-      │       ▅▅▅▅███████    ▃▃▃████████   ▅▅▅▅███████  █
-      │   ▄▄▄▄███████████    ███████████▃▃▃███████████▅▅█
-    0 │▂▂▂███████████████████████████████████████████████
-      └──────────────────────────────────────────────────
+  144 |          ::::::                        :::::
+      |          ######         :::::      ....#####
+   72 |       :::######     ....#####      #########    #
+      |   ....#########     #########  ....#########  ###
+      |   #############  ...#########..#############::###
+    0 |...###############################################
+      +--------------------------------------------------
       0                                              1.4s
 
 Reactor - Heap Used (MB)
-  164 │                  ▄▄▄▄
-      │              ▂▂▂▂████
-   82 │              ████████       ▁▁▁█
-      │          ████████████       ████
-      │       ███████████████   ████████
-    0 │▃▃▃▆▆▆▆██████████████████████████
-      └──────────────────────────────────────────────────
+  170 |                         ::::
+      |                     ::::####
+   85 |                  :::########     #
+      |          ....###############   ###
+      |       :::###################:::###
+    0 |...################################
+      +--------------------------------------------------
       0                                              1.4s
 
 Virtual Threads - Heap Used (MB)
-  168 │                  ▄▄▄▄
-      │              ▅▅▅▅████
-   84 │          ▆▆▆▆████████       ▁
-      │       ▅▅▅████████████   ▃▃▃▃█
-      │   ▄▄▄▄███████████████▅▅▅█████
-    0 │▂▂▂███████████████████████████
-      └──────────────────────────────────────────────────
+  161 |                     ::::
+      |                  :::####
+   80 |              ###########           ...
+      |       ...###############       ....###
+      |       ##################    :::#######
+    0 |...####################################
+      +--------------------------------------------------
       0                                              1.4s
 ```
 
 **What the graphs reveal:**
 
 - **Naive**: Sawtooth pattern with 3 visible GC drops — heap climbs as orders accumulate, GC compacts, then climbs again. Peak is clipped by GC.
-- **Stream API / Iterator**: Steady climb to ~155-170 MB with only 1 GC. The high peak includes accumulated garbage from processed pages that hasn't been collected yet.
-- **Pooled Iterator**: Smooth, gradual climb to only ~120 MB with **0 GC events**. No garbage from Order/String objects means no GC pressure and a genuinely lower peak.
-- **Async**: Pronounced sawtooth with 3 GC cycles — the recursive CompletableFuture chains generate heavy garbage (394 MB/s allocation rate).
+- **Stream API / Iterator**: Steady climb to ~145-160 MB with only 1 GC. The high peak includes accumulated garbage from processed pages that hasn't been collected yet.
+- **Pooled Iterator**: Smooth, gradual climb to only ~118 MB with **0 GC events**. No garbage from Order/String objects means no GC pressure and a genuinely lower peak.
+- **Async**: Pronounced sawtooth with 3 GC cycles — the recursive CompletableFuture chains generate heavy garbage (352 MB/s allocation rate).
 - **Reactor / Virtual Threads**: Similar shape to Iterator but finish faster. The post-peak dip visible in some runs is a single GC event.
 
 ---
 
 ## Key Observations
 
-### 1. Async Takes Significantly Longer (1.35s vs 0.79-1.03s)
+### 1. Async Takes Significantly Longer (1.36s vs 0.90-1.04s)
 
-**Observed**: Async variant is ~40-70% slower than other streaming variants.
+**Observed**: Async variant is ~30-50% slower than other streaming variants.
 
 **Root Cause: Recursive CompletableFuture Composition Overhead**
 
@@ -166,7 +166,7 @@ private CompletableFuture<List<Order>> takeRecursive(
 
 ---
 
-### 2. Naive Has Lower Peak Heap Than Streaming Variants (114 MB vs 150-157 MB)
+### 2. Naive Has Lower Peak Heap Than Streaming Variants (114 MB vs 145-155 MB)
 
 **Observed**: Counter-intuitively, Naive shows a lower Peak Heap than Iterator/Stream/Reactor despite buffering all orders.
 
@@ -190,7 +190,7 @@ private CompletableFuture<List<Order>> takeRecursive(
 
 **The Pooled Iterator proves this explanation:**
 
-The Pooled Iterator achieves 110 MB peak with **0 GC events** — genuinely low memory, not an artifact. It avoids creating Order/String objects entirely, so there's no garbage to inflate the peak. This confirms that the Iterator's 154 MB peak is dominated by uncollected garbage, not by the working set itself.
+The Pooled Iterator achieves 108 MB peak with **0 GC events** — genuinely low memory, not an artifact. It avoids creating Order/String objects entirely, so there's no garbage to inflate the peak. This confirms that the Iterator's 146 MB peak is dominated by uncollected garbage, not by the working set itself.
 
 **The reality at scale:**
 ```
@@ -201,13 +201,13 @@ Streaming memory usage: O(page_size)     = O(1,000 orders)
 At even larger scales, Naive would require proportionally more memory while streaming variants stay constant at O(page_size).
 
 **What Avg Heap reveals:**
-- All variants show similar Avg Heap (59-83 MB)
+- All variants show similar Avg Heap (63-73 MB)
 - This reflects the baseline JVM footprint + active working set
 - Streaming variants' working set is genuinely smaller during steady-state processing
 
 ---
 
-### 3. Pooled Iterator Cuts Allocation Rate in Half (104 MB/s vs 208 MB/s)
+### 3. Pooled Iterator Cuts Allocation Rate in Half (102 MB/s vs 231 MB/s)
 
 **Observed**: The Pooled Iterator has half the allocation rate of the standard Iterator, zero GC events, and the lowest peak heap of any variant.
 
@@ -217,23 +217,23 @@ The standard Iterator creates 500,000 `Order` record objects (one per item) plus
 
 | Metric | Iterator | Pooled Iterator | Difference |
 |--------|----------|-----------------|------------|
-| Alloc Rate | 208 MB/s | 104 MB/s | **-50%** |
-| Peak Heap | 154 MB | 110 MB | **-29%** |
-| Avg Heap | 74 MB | 64 MB | **-14%** |
+| Alloc Rate | 231 MB/s | 102 MB/s | **-56%** |
+| Peak Heap | 146 MB | 108 MB | **-26%** |
+| Avg Heap | 68 MB | 63 MB | **-7%** |
 | GC Count | 1 | 0 | **Eliminated** |
-| Duration | 1.01s | 0.94s | **-7%** |
+| Duration | 0.96s | 0.96s | **Same** |
 
 **Why peak heap is also lower (not just allocation rate):**
 
-With zero GC events, there's no accumulated garbage from previous pages lingering in the young generation. The Iterator's 154 MB peak includes ~40+ MB of dead `Order`/`String` objects awaiting their first (and only) GC. The Pooled variant never creates those objects, so the peak reflects the actual working set.
+With zero GC events, there's no accumulated garbage from previous pages lingering in the young generation. The Iterator's 146 MB peak includes ~38 MB of dead `Order`/`String` objects awaiting their first (and only) GC. The Pooled variant never creates those objects, so the peak reflects the actual working set.
 
 **Trade-off**: The Pooled Iterator is coupled to the JSON schema (it knows to look for the `"amount"` field). The standard Iterator uses generic `Order` deserialization, making it more flexible.
 
 ---
 
-### 4. Virtual Threads is Fastest (0.79s)
+### 4. Virtual Threads and Streaming Variants Are Fastest (0.90-1.04s)
 
-**Observed**: Virtual Threads outperforms all other variants by 7-42%.
+**Observed**: Stream API, Reactor, Iterator, Pooled Iterator, and Virtual Threads all cluster in the 0.90-1.04s range, significantly faster than Naive (1.37s) and Async (1.36s).
 
 **Root Cause: Simplicity + Efficient I/O Handling**
 
@@ -264,12 +264,12 @@ public class VirtualThreadAggregator {
 
 **Comparison breakdown:**
 
-- **vs Naive (1.12s)**: Naive waits for all pages before aggregating; Virtual Threads processes incrementally
-- **vs Stream API (1.03s)**: Stream pipeline adds Spliterator/Collector overhead
-- **vs Iterator (1.01s)**: Nearly identical logic, but Iterator blocks platform thread during I/O
-- **vs Pooled Iterator (0.94s)**: Lower allocation rate doesn't compensate for virtual thread I/O efficiency
-- **vs Async (1.35s)**: No recursive future chains, no atomic variable overhead
-- **vs Reactor (0.87s)**: No reactive framework overhead
+- **vs Naive (1.37s)**: Naive waits for all pages before aggregating; Virtual Threads processes incrementally
+- **vs Stream API (0.90s)**: Stream pipeline adds Spliterator/Collector overhead but still fast
+- **vs Iterator (0.96s)**: Nearly identical logic, but Iterator blocks platform thread during I/O
+- **vs Pooled Iterator (0.96s)**: Lower allocation rate doesn't compensate for virtual thread I/O efficiency
+- **vs Async (1.36s)**: No recursive future chains, no atomic variable overhead
+- **vs Reactor (0.94s)**: No reactive framework overhead
 
 ---
 
@@ -305,7 +305,7 @@ Point-in-time measurements are affected by:
 - Framework object lifecycle
 - Allocation patterns (bulk vs continuous)
 
-**The Pooled Iterator demonstrates this clearly:** it achieves the lowest peak heap (110 MB) with 0 GC events, proving that other variants' peaks are inflated by uncollected garbage rather than actual working set size.
+**The Pooled Iterator demonstrates this clearly:** it achieves the lowest peak heap (108 MB) with 0 GC events, proving that other variants' peaks are inflated by uncollected garbage rather than actual working set size.
 
 **Better metrics for memory efficiency:**
 - Avg Heap (steady-state usage)
@@ -332,7 +332,7 @@ For performance-critical paths, simpler is often faster.
 
 ### 5. Buffer Reuse Reduces Allocation Rate, Not Necessarily Heap
 
-The Pooled Iterator eliminates ~103 MB of total object allocation (500K Order records + Strings), cutting allocation rate by 50% and eliminating GC entirely. However, the reduction in peak heap (110 vs 154 MB) is largely because there's no accumulated garbage — the actual per-page working set was already tiny (~150 KB for 1,000 orders).
+The Pooled Iterator eliminates ~103 MB of total object allocation (500K Order records + Strings), cutting allocation rate by more than half and eliminating GC entirely. However, the reduction in peak heap (108 vs 146 MB) is largely because there's no accumulated garbage — the actual per-page working set was already tiny (~150 KB for 1,000 orders).
 
 **When buffer reuse matters:**
 - Latency-sensitive workloads where GC pauses are unacceptable
