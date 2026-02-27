@@ -84,7 +84,7 @@ public class MemoryBenchmarkMain {
             case "pooled" -> new PooledIteratorAggregator(url).aggregateOrders();
             case "async" -> new AsyncIterableAggregator(url).aggregateOrdersAsync().join();
             case "reactor" -> new ReactorAggregator(url).aggregateOrders().block();
-            case "virtual" -> new VirtualThreadAggregator(url).aggregateOrders();
+            case "virtual" -> new VirtualThreadAggregator(url).aggregateOrdersAsync().join();
             default -> throw new IllegalArgumentException("Unknown variant: " + variant +
                     ". Valid values: naive, stream, iterator, pooled, async, reactor, virtual");
         };
